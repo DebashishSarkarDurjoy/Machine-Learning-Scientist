@@ -1,0 +1,89 @@
+Types of supervised learning:
+1. Classification 2. Regression
+
+Naming conventions:
+- Feature = predictor variable = independent variable 
+- Target variable = dependent variable = response variable 
+
+Before using supervised learning:
+- No missing values
+- Data in numeric format
+- Data in pandas DataFrame or NumPy array
+
+Also perform EDA first
+
+scikit-learn syntax
+from sklearn.module import Model 
+model = Model() #instantiate the model 
+model.fit(X, y) # X = feature/predictor variable/independent varialbe, y = dependent variable 
+predictions = model.predict(X_new)
+
+Classifying labels of unseen data:
+1. Build a model 
+2. Model learns from the labeled data
+3. Pass unlabelled data to the model as input
+4. Model predicts the labels of the unseen data
+
+labeled data = training data 
+
+KNN (k-Nearest Neighbors)
+- Predict the label of a data point by:
+    - looking at the k closest labeled data points
+    - Taking a majority vote
+
+Using scikit-learn to fit a classifier
+from sklearn.neighbors import KNeighborsClassifier
+X = churn_df[["total_day_charge", "total_eve_charge"]].values 
+y = churn_df["churn"].values 
+knn = KNeighborsClassifier(n_neighbors=15)
+knn.fit(X, y)
+
+Predicting on unlabeled data 
+X_new = np.array([[56.8, 17.5],
+                   [24.4, 24.1]
+                   [50.1, 10.9]])
+predictions = knn.predict(X_new)
+
+Measuring Model Performance
+- In classification, accuracy is a commonly used metric
+- Accuracy: correct predections / total observations
+
+Computing Accuracy 
+- Split data
+    - Training set: fit/train classifier on training set 
+    - Test set: Calculate accuracy using test set 
+
+Train/test split:
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=21, stratify=y)
+knn = KNeighborClassifier(n_neighbor=6)
+knn.fit(X_train, y_train)
+print(knn.score(X_test, y_test))
+
+Model Complexity:
+- Larger k = less complex model = can cause underfitting
+- Smaller k = more complex model = can lead to overfitting
+
+Model complexity and over/underfitting:
+train_accuracies = {}
+test_accuracies = {}
+neighbors = np.arange(1,26)
+for neighbor in neighbors:
+    knn = KNeighborsClassifier(n_neighbor=neighbor)
+    knn.fit(X_train, y_train)
+    train_accuracies[neighbor] = knn.score(X_train, y_train)
+    train_accuracies[neighbor] = knn.score(X_test, y_test)
+
+Plotting our results:
+plt.figure(figsize=(8,6))
+plt.title("KNN: Varying Number of Neighbors")
+plt.plot(neighbors, train_accuracies.values(), label="Training Accuracy")
+plt.plot(neighbors, test_accuracies.values(), label="Testing Accuracy")
+plt.legend()
+plt.xlabel("Number of neighbors")
+plt.ylabel("Accuracy")
+plt.show()
+
+Obtaining the features and target varialbes from DF to NumPy:
+X = churn_df.drop("churn", axis=1).values 
+y = churn_df["churn"].values 
